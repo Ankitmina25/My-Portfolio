@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Github, Terminal, LayoutTemplate, Server, Database } from 'lucide-react';
+import { ArrowRight, Github, Terminal, LayoutTemplate, Server, Database, FileText } from 'lucide-react';
 
 const DataStream = () => {
     return (
@@ -160,8 +160,8 @@ const Hero = () => {
     const { scrollY } = useScroll();
     
     // Parallax effects tied to scroll
-    const heroY = useTransform(scrollY, [0, 800], [0, 250]);
-    const heroOpacity = useTransform(scrollY, [0, 600], [1, 0]);
+    const heroY = useTransform(scrollY, [0, 1000], [0, 200]);
+    const heroOpacity = useTransform(scrollY, [0, 800], [1, 0]);
 
     const texts = [
         "Building Scalable Web Apps",
@@ -182,27 +182,62 @@ const Hero = () => {
     };
 
     return (
-        <section id="home" className="min-h-screen flex items-center justify-center pt-16 pb-12 overflow-hidden relative">
+        <section id="home" className="min-h-screen flex items-center justify-center pt-24 pb-8 overflow-hidden relative">
             <motion.div 
                 style={{ y: heroY, opacity: heroOpacity }}
                 className="max-w-7xl mx-auto px-6 w-full"
             >
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
                     {/* LEFT — Text Content */}
-                    <div className="text-center lg:text-left order-2 lg:order-1">
+                    <div className="text-center lg:text-left order-2 lg:order-1 flex flex-col items-center lg:items-start mt-8 lg:mt-0">
+                        
+                        {/* Profile Image Area */}
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.8 }}
-                            className="mb-6 inline-flex items-center gap-2"
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className="relative mb-5 group cursor-pointer"
                         >
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
-                            <span className="px-4 py-2 rounded-full glass-morphism text-xs font-semibold tracking-widest uppercase text-green-400">
-                                Available for hire
+                            {/* Glowing rings behind image */}
+                            <div className="absolute inset-0 rounded-full bg-accent-purple/20 blur-md group-hover:bg-accent-purple/40 transition-colors" />
+                            <div className="absolute -inset-1 rounded-full bg-premium-gradient opacity-30 group-hover:opacity-60 blur-sm transition-opacity animate-pulse" />
+                            
+                            {/* Image Container */}
+                            <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-white/10 glass-morphism shadow-2xl">
+                                <img 
+                                    src="/profile.png" // Place your image as profile.png in the public folder
+                                    alt="Ankit Meena" 
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = 'https://ui-avatars.com/api/?name=Ankit+Meena&background=0D0D0D&color=A855F7&size=256&rounded=true&bold=true';
+                                    }}
+                                />
+                                {/* Shiny overlay effect */}
+                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rotate-45" />
+                            </div>
+                            
+                            {/* Status Badge floating on bottom right of the image */}
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.5, type: 'spring' }}
+                                className="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-[3px] border-[#0a0a0a] flex items-center justify-center group-hover:bg-green-400 transition-colors"
+                                title="Available for hire"
+                            >
+                                <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></span>
+                            </motion.div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.1 }}
+                            className="mb-3 inline-flex items-center gap-2"
+                        >
+                            <span className="px-4 py-1.5 rounded-full glass-morphism text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-white/70 border border-white/5">
+                                <span className="text-green-400 mr-2">●</span> Available for hire
                             </span>
                         </motion.div>
 
@@ -210,7 +245,7 @@ const Hero = () => {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.2 }}
-                            className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tight leading-none"
+                            className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-4 tracking-tight leading-none"
                         >
                             Ankit{' '}
                             <span className="accent-gradient relative">
@@ -228,7 +263,7 @@ const Hero = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.4 }}
-                            className="text-xl md:text-2xl font-medium text-white/80 mb-8 h-9 overflow-hidden"
+                            className="text-lg sm:text-xl md:text-2xl font-medium text-white/80 mb-5 h-8 overflow-hidden"
                         >
                             <AnimatePresence mode="wait">
                                 <motion.p
@@ -248,7 +283,7 @@ const Hero = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.6 }}
-                            className="max-w-lg mx-auto lg:mx-0 text-base text-white/50 mb-10 leading-relaxed"
+                            className="max-w-lg mx-auto lg:mx-0 text-sm sm:text-base text-white/50 mb-6 leading-relaxed"
                         >
                             Full Stack Developer & 3rd Year B.Tech CSE Student specialising in the MERN stack. Passionate about building scalable, real-world applications.
                         </motion.p>
@@ -258,7 +293,7 @@ const Hero = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.75 }}
-                            className="flex items-center justify-center lg:justify-start gap-8 mb-10"
+                            className="flex items-center justify-center lg:justify-start gap-6 mb-6"
                         >
                             {[
                                 { label: 'Projects', value: '10+' },
@@ -266,8 +301,8 @@ const Hero = () => {
                                 { label: 'GFG', value: '100+' },
                             ].map((s) => (
                                 <div key={s.label} className="text-center lg:text-left">
-                                    <p className="text-2xl font-black accent-gradient">{s.value}</p>
-                                    <p className="text-xs text-white/40 uppercase tracking-widest">{s.label}</p>
+                                    <p className="text-xl sm:text-2xl font-black accent-gradient">{s.value}</p>
+                                    <p className="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest">{s.label}</p>
                                 </div>
                             ))}
                         </motion.div>
@@ -276,21 +311,48 @@ const Hero = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.9 }}
-                            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
+                            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 w-full sm:w-auto"
                         >
                             <button
                                 onClick={() => handleScroll('projects')}
-                                className="px-8 py-4 bg-premium-gradient rounded-full font-bold shadow-lg shadow-accent-purple/20 hover:shadow-accent-purple/40 hover:scale-105 transition-all flex items-center group"
+                                className="w-full sm:w-auto px-6 py-3 bg-premium-gradient rounded-full text-sm font-bold shadow-lg shadow-accent-purple/20 hover:shadow-accent-purple/40 hover:scale-105 transition-all flex items-center justify-center group"
                             >
                                 View Projects
-                                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={16} />
                             </button>
                             <button
                                 onClick={() => handleScroll('contact')}
-                                className="px-8 py-4 glass-morphism rounded-full font-bold hover:bg-white/10 hover:scale-105 transition-all"
+                                className="w-full sm:w-auto px-6 py-3 glass-morphism rounded-full text-sm font-bold hover:bg-white/10 hover:scale-105 transition-all"
                             >
                                 Contact Me
                             </button>
+                        </motion.div>
+
+                        {/* CV Links */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 1.0 }}
+                            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-6"
+                        >
+                            <a 
+                                href="https://drive.google.com/file/d/1HBCAyK1gwL57mYb0OSnhKYtvGvNaLI4W/view?usp=sharing" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="px-6 py-3 glass-morphism rounded-full text-sm font-semibold hover:bg-white/10 hover:scale-105 transition-all flex items-center gap-2 border border-white/5"
+                            >
+                                <FileText size={16} /> 
+                                General CV
+                            </a>
+                            <a 
+                                href="/specialized-cv.pdf" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="px-6 py-3 glass-morphism rounded-full text-sm font-semibold hover:bg-white/10 hover:scale-105 transition-all flex items-center gap-2 border border-white/5"
+                            >
+                                <FileText size={16} /> 
+                                Specialized CV
+                            </a>
                         </motion.div>
                     </div>
 
