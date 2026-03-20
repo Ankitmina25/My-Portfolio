@@ -9,9 +9,10 @@ import emailjs from '@emailjs/browser';
 // 3. Create an Email Template with variables: {{from_name}}, {{from_email}}, {{message}}
 //    Set "To Email" in the template to your own email (ankitmina2512@gmail.com)
 // 4. Copy your Public Key from Account → API Keys
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_abc123'
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_xyz456'
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'abcDEFghiJKL'
+const EMAILJS_SERVICE_ID = 'service_9r3juvx';   // e.g. 'service_abc123'
+const EMAILJS_TEMPLATE_ID = 'template_wg66uzf';  // e.g. 'template_xyz456'
+const EMAILJS_PUBLIC_KEY = 'ctr3TNSBEs3xx3qiw';   // e.g. 'abcDEFghiJKL'
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 const inputClass =
@@ -39,12 +40,12 @@ const Contact = () => {
                 EMAILJS_SERVICE_ID,
                 EMAILJS_TEMPLATE_ID,
                 {
-                    from_name:  form.name,
+                    from_name: form.name,
                     from_email: form.email,
-                    message:    form.message,
-                    to_name:    'Ankit',
+                    message: form.message,
+                    to_name: 'Ankit',
                 },
-                EMAILJS_PUBLIC_KEY
+                { publicKey: EMAILJS_PUBLIC_KEY }
             );
             setStatus('success');
             setForm({ name: '', email: '', message: '' });
