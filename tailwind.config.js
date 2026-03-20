@@ -9,8 +9,8 @@ export default {
       colors: {
         background: "#000000",
         accent: {
-          purple: "#A855F7",
-          blue: "#3B82F6",
+          purple: "#F3F4F6", // Stark off-white/silver, replacing neon purple
+          blue: "#9CA3AF", // Sophisticated slate gray, replacing neon blue
         },
       },
       animation: {
@@ -29,7 +29,7 @@ export default {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'premium-gradient': 'linear-gradient(to right, #A855F7, #3B82F6)',
+        'premium-gradient': 'linear-gradient(to right, #F3F4F6, #9CA3AF)',
       }
     },
   },
