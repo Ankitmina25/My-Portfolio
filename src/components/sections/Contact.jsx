@@ -13,6 +13,42 @@ const EMAILJS_SERVICE_ID = 'service_9r3juvx';   // e.g. 'service_abc123'
 const EMAILJS_TEMPLATE_ID = 'template_wg66uzf';  // e.g. 'template_xyz456'
 const EMAILJS_PUBLIC_KEY = 'ctr3TNSBEs3xx3qiw';   // e.g. 'abcDEFghiJKL'
 
+// ─── Rate Limit Config ────────────────────────────────────────────────────────
+const RATE_LIMIT_MAX = 2;
+const RATE_LIMIT_WINDOW = 3600000; // 1 hour in ms
+const STORAGE_KEY = 'email_send_timestamps';
+
+const getRateLimitData = () => {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+    } catch {
+        return [];
+    }
+};
+
+const saveRateLimitData = (timestamps) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(timestamps));
+};
+
+const checkRateLimit = () => {
+    const now = Date.now();
+    let timestamps = getRateLimitData();
+    
+    // Filter out timestamps older than the window
+    timestamps = timestamps.filter(t => now - t < RATE_LIMIT_WINDOW);
+    saveRateLimitData(timestamps);
+    
+    if (timestamps.length >= RATE_LIMIT_MAX) {
+        const oldest = timestamps[0];
+        const waitTimeMs = RATE_LIMIT_WINDOW - (now - oldest);
+        const waitTimeMins = Math.ceil(waitTimeMs / 60000);
+        return waitTimeMins;
+    }
+    return null;
+};
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 const inputClass =
@@ -23,7 +59,9 @@ const inputClass =
 const Contact = () => {
     const formRef = useRef(null);
     const [form, setForm] = useState({ name: '', email: '', message: '' });
-    const [status, setStatus] = useState('idle'); // idle | loading | success | error
+    const [status, setStatus] = useState('idle'); // idle | loading | success | error | rate-limited
+    const [waitTime, setWaitTime] = useState(0);
+
 
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -33,6 +71,15 @@ const Contact = () => {
         e.preventDefault();
 
         if (!form.name || !form.email || !form.message) return;
+
+        // Check Rate Limit
+        const retryInMins = checkRateLimit();
+        if (retryInMins) {
+            setWaitTime(retryInMins);
+            setStatus('rate-limited');
+            setTimeout(() => setStatus('idle'), 6000);
+            return;
+        }
 
         setStatus('loading');
         try {
@@ -47,6 +94,12 @@ const Contact = () => {
                 },
                 { publicKey: EMAILJS_PUBLIC_KEY }
             );
+
+            // Record successful send
+            const timestamps = getRateLimitData();
+            timestamps.push(Date.now());
+            saveRateLimitData(timestamps);
+
             setStatus('success');
             setForm({ name: '', email: '', message: '' });
             setTimeout(() => setStatus('idle'), 5000);
@@ -56,6 +109,7 @@ const Contact = () => {
             setTimeout(() => setStatus('idle'), 4000);
         }
     };
+
 
     return (
         <section id="contact" className="py-20 relative overflow-hidden">
@@ -245,7 +299,20 @@ const Contact = () => {
                                     Something went wrong. Please try again or email me directly.
                                 </motion.div>
                             )}
+
+                            {status === 'rate-limited' && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    className="flex items-center gap-3 p-4 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400 text-sm font-medium"
+                                >
+                                    <XCircle size={18} />
+                                    Too many messages. Please try again in {waitTime} {waitTime === 1 ? 'minute' : 'minutes'}.
+                                </motion.div>
+                            )}
                         </AnimatePresence>
+
                     </motion.form>
                 </div>
             </div>
