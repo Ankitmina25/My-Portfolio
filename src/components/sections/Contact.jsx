@@ -34,11 +34,11 @@ const saveRateLimitData = (timestamps) => {
 const checkRateLimit = () => {
     const now = Date.now();
     let timestamps = getRateLimitData();
-    
+
     // Filter out timestamps older than the window
     timestamps = timestamps.filter(t => now - t < RATE_LIMIT_WINDOW);
     saveRateLimitData(timestamps);
-    
+
     if (timestamps.length >= RATE_LIMIT_MAX) {
         const oldest = timestamps[0];
         const waitTimeMs = RATE_LIMIT_WINDOW - (now - oldest);
