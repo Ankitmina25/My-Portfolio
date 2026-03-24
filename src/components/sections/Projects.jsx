@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
-import { Github, ExternalLink, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Github, ExternalLink, ArrowRight, ArrowUpRight, Globe, Monitor, MousePointer2, Loader2 } from 'lucide-react';
 
 const projects = [
     {
@@ -33,287 +33,233 @@ const projects = [
     },
 ];
 
-/* ── Magnetic 3-D tilt card ─────────────────────────────── */
 const ProjectCard = ({ project, index }) => {
-    const ref = useRef(null);
-    const [hovered, setHovered] = useState(false);
-
-    const x = useMotionValue(0);
-    const y = useMotionValue(0);
-
-    const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [8, -8]), { stiffness: 200, damping: 20 });
-    const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-8, 8]), { stiffness: 200, damping: 20 });
-    const glowX   = useTransform(x, [-0.5, 0.5], [0, 100]);
-    const glowY   = useTransform(y, [-0.5, 0.5], [0, 100]);
-
-    const handleMouseMove = (e) => {
-        const rect = ref.current.getBoundingClientRect();
-        x.set((e.clientX - rect.left) / rect.width - 0.5);
-        y.set((e.clientY - rect.top)  / rect.height - 0.5);
-    };
-    const handleMouseLeave = () => {
-        x.set(0);
-        y.set(0);
-        setHovered(false);
-    };
+    const [isHovered, setIsHovered] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 60 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.7, delay: index * 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-            style={{ perspective: 1200 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: index * 0.15 }}
+            className="group relative w-full mb-12 lg:mb-16"
         >
-            <motion.div
-                ref={ref}
-                style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={handleMouseLeave}
-                className="relative group rounded-[32px] overflow-hidden cursor-none"
-            >
-                {/* ── Animated gradient border ── */}
-                <div
-                    className="absolute inset-0 rounded-[32px] p-px z-0 transition-opacity duration-500"
-                    style={{ opacity: hovered ? 1 : 0 }}
-                >
+            <div className="relative flex flex-col lg:flex-row bg-white/[0.02] border border-white/10 rounded-[2rem] overflow-hidden backdrop-blur-sm min-h-[400px] lg:h-[480px]">
+                
+                {/* ── Content Side (Left) ── */}
+                <div className="flex-1 p-6 md:p-10 lg:w-[38%] flex flex-col justify-center">
                     <motion.div
-                        className="absolute inset-0 rounded-[32px]"
-                        style={{
-                            background: `conic-gradient(from 0deg at ${glowX}% ${glowY}%, ${project.accent}, ${project.accentB}, ${project.accent})`,
-                        }}
-                    />
-                </div>
-
-                {/* ── Inner card ── */}
-                <div className="relative z-10 m-px rounded-[31px] overflow-hidden bg-[#0a0a0a]">
-
-                    {/* Image area */}
-                    <div className="relative h-44 overflow-hidden">
-                        <motion.img
-                            src={project.image}
-                            alt={project.title}
-                            className="w-full h-full object-cover"
-                            animate={{ scale: hovered ? 1.08 : 1 }}
-                            transition={{ duration: 0.7, ease: 'easeOut' }}
-                        />
-
-                        {/* Dark overlay that lifts on hover */}
-                        <motion.div
-                            className="absolute inset-0"
-                            animate={{ opacity: hovered ? 0.3 : 0.65 }}
-                            style={{ background: 'linear-gradient(to top, #000 0%, rgba(0,0,0,0.5) 40%, transparent 100%)' }}
-                            transition={{ duration: 0.4 }}
-                        />
-
-                        {/* Number badge */}
-                        <div className="absolute top-4 left-4 font-black text-4xl leading-none select-none pointer-events-none"
-                             style={{ color: `${project.accent}18`, WebkitTextStroke: `1px ${project.accent}40` }}>
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 + index * 0.1 }}
+                        className="flex items-center gap-2 mb-4"
+                    >
+                        <span className="text-[10px] font-black text-white/20 select-none tracking-widest">
                             {project.id}
-                        </div>
+                        </span>
+                        <div className="h-px w-8 bg-white/10" />
+                    </motion.div>
 
-                        {/* Feature pills */}
-                        <div className="absolute top-5 right-5 flex flex-col gap-2">
-                            {project.features.slice(0, 2).map((f) => (
-                                <motion.span
-                                    key={f}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: hovered ? 1 : 0.6, x: hovered ? 0 : 8 }}
-                                    transition={{ duration: 0.35 }}
-                                    className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full backdrop-blur-md"
-                                    style={{
-                                        background: `${project.accent}22`,
-                                        border: `1px solid ${project.accent}40`,
-                                        color: project.accent,
-                                    }}
-                                >
-                                    {f}
-                                </motion.span>
-                            ))}
-                        </div>
+                    <motion.p 
+                        className="text-[9px] font-black uppercase tracking-[0.4em] mb-2"
+                        style={{ color: project.accent }}
+                    >
+                        {project.subtitle}
+                    </motion.p>
 
-                        {/* Hover glow spot following mouse */}
-                        <motion.div
-                            className="absolute w-40 h-40 rounded-full pointer-events-none blur-3xl"
-                            style={{
-                                background: project.accent,
-                                opacity: hovered ? 0.15 : 0,
-                                left: useTransform(x, [-0.5, 0.5], ['0%', '80%']),
-                                top:  useTransform(y, [-0.5, 0.5], ['0%', '80%']),
-                                transform: 'translate(-50%, -50%)',
-                            }}
-                            transition={{ duration: 0.1 }}
-                        />
+                    <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
+                        {project.title.split(' ')[0]} <br />
+                        <span className="text-white/30">{project.title.split(' ').slice(1).join(' ')}</span>
+                    </h3>
+
+                    <p className="text-white/50 text-xs md:text-sm leading-relaxed mb-6 max-w-sm">
+                        {project.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 mb-8">
+                        {project.tech.map((t) => (
+                            <span 
+                                key={t}
+                                className="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/5 bg-white/[0.03] text-white/50"
+                            >
+                                {t}
+                            </span>
+                        ))}
                     </div>
 
-                    {/* Content */}
-                    <div className="p-5 relative">
-                        {/* Subtle inner glow */}
-                        <motion.div
-                            className="absolute top-0 left-0 right-0 h-px"
-                            style={{ background: `linear-gradient(90deg, transparent, ${project.accent}60, transparent)` }}
-                            animate={{ opacity: hovered ? 1 : 0 }}
-                            transition={{ duration: 0.4 }}
-                        />
-
-                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] mb-1.5 transition-colors duration-300"
-                           style={{ color: project.accent }}>
-                            {project.subtitle}
-                        </p>
-
-                        <h3 className="text-xl md:text-2xl font-black mb-2 uppercase tracking-tight leading-tight">
-                            {project.title}
-                        </h3>
-
-                        <p className="text-white/50 text-xs leading-relaxed mb-4">
-                            {project.description}
-                        </p>
-
-                        {/* Tech tags */}
-                        <div className="flex flex-wrap gap-2 mb-6">
-                            {project.tech.map((t) => (
-                                <span
-                                    key={t}
-                                    className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-                                    style={{
-                                        background: `${project.accentB}15`,
-                                        color: `${project.accentB}`,
-                                        border: `1px solid ${project.accentB}25`,
-                                    }}
-                                >
-                                    {t}
-                                </span>
-                            ))}
-                        </div>
-
-                        {/* Bottom CTA bar — slides up on hover */}
-                        <div className="relative h-12 overflow-hidden">
-                            {/* Default state */}
-                            <motion.div
-                                className="absolute inset-0 flex items-center justify-between"
-                                animate={{ y: hovered ? -48 : 0, opacity: hovered ? 0 : 1 }}
-                                transition={{ duration: 0.35, ease: 'easeInOut' }}
-                            >
-                                <div className="flex gap-2">
-                                    {[...Array(3)].map((_, i) => (
-                                        <span key={i} className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                                    ))}
-                                </div>
-                                <span className="text-xs text-white/30 uppercase tracking-widest font-bold">Hover to explore</span>
-                            </motion.div>
-
-                            {/* Hovered state */}
-                            <motion.div
-                                className="absolute inset-0 flex items-center justify-between"
-                                animate={{ y: hovered ? 0 : 48, opacity: hovered ? 1 : 0 }}
-                                transition={{ duration: 0.35, ease: 'easeInOut' }}
-                            >
-                                <a
-                                    href={project.github}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/60 hover:text-white transition-colors group/btn"
-                                >
-                                    <Github size={15} />
-                                    Source Code
-                                </a>
-
-                                <a
-                                    href={project.live}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all"
-                                    style={{
-                                        background: `linear-gradient(135deg, ${project.accent}, ${project.accentB})`,
-                                        boxShadow: `0 4px 20px ${project.accent}40`,
-                                    }}
-                                >
-                                    Live Demo <ArrowUpRight size={14} />
-                                </a>
-                            </motion.div>
-                        </div>
+                    <div className="flex items-center gap-5">
+                        <a 
+                            href={project.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-white transition-colors"
+                        >
+                            <Github size={14} />
+                            Source
+                        </a>
+                        <a 
+                            href={project.live}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/btn relative px-6 py-3 rounded-full overflow-hidden"
+                            style={{ background: `linear-gradient(135deg, ${project.accent}, ${project.accentB})` }}
+                        >
+                            <div className="relative z-10 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+                                Live View <ArrowUpRight size={14} />
+                            </div>
+                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+                        </a>
                     </div>
                 </div>
-            </motion.div>
+
+                {/* ── Preview Side (Right) ── */}
+                <div 
+                    className="relative flex-1 min-h-[300px] lg:min-h-full bg-black/40 border-l border-white/5 group/preview"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    {/* Browser UI Mockup */}
+                    <div className="absolute top-0 left-0 right-0 h-8 bg-[#121212] border-b border-white/5 flex items-center px-4 gap-3 z-20">
+                        <div className="flex gap-1">
+                            <div className="w-2 h-2 rounded-full bg-red-500/30" />
+                            <div className="w-2 h-2 rounded-full bg-yellow-500/30" />
+                            <div className="w-2 h-2 rounded-full bg-green-500/30" />
+                        </div>
+                        <div className="flex-1 max-w-xs h-5 bg-white/[0.03] rounded border border-white/5 flex items-center px-2 gap-1.5">
+                            <Globe size={8} className="text-white/20" />
+                            <span className="text-[8px] text-white/20 truncate select-none">
+                                {project.live.replace('https://', '')}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Iframe Container */}
+                    <div className="absolute inset-0 pt-8 overflow-hidden">
+                        {isLoading && (
+                            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#0a0a0a]">
+                                <Loader2 className="w-6 h-6 text-accent-blue animate-spin mb-3" />
+                                <span className="text-[8px] font-black uppercase tracking-widest text-white/10">Syncing Environment...</span>
+                            </div>
+                        )}
+                        
+                        <iframe 
+                            src={project.live}
+                            className={`w-full h-full border-none transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'} 
+                                ${isHovered ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                            onLoad={() => setIsLoading(false)}
+                            title={project.title}
+                        />
+
+                        {/* Interaction Overlay */}
+                        <AnimatePresence>
+                            {!isHovered && !isLoading && (
+                                <motion.div 
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/50 backdrop-blur-[1px] cursor-none"
+                                >
+                                    <div className="p-4 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-md flex flex-col items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center animate-bounce">
+                                            <MousePointer2 className="text-white/40" size={16} />
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white/60 mb-0.5">Interactive Sandbox</p>
+                                            <p className="text-[7px] font-bold text-white/20 uppercase tracking-widest">Hover to explore</p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    {/* Interactive Cursor Indicator (Inside Preview) */}
+                    <motion.div 
+                        animate={{ opacity: isHovered ? 0.3 : 0 }}
+                        className="absolute bottom-4 right-4 z-30 px-2 py-1 rounded-full bg-accent-blue/80 text-white text-[8px] font-black uppercase tracking-widest pointer-events-none"
+                    >
+                        LIVE CONTROL
+                    </motion.div>
+                </div>
+
+                {/* Background Accent Gradients */}
+                <div 
+                    className="absolute -top-16 -left-16 w-48 h-48 blur-[100px] rounded-full pointer-events-none opacity-10"
+                    style={{ backgroundColor: project.accent }}
+                />
+                <div 
+                    className="absolute -bottom-16 -right-16 w-48 h-48 blur-[100px] rounded-full pointer-events-none opacity-10"
+                    style={{ backgroundColor: project.accentB }}
+                />
+            </div>
         </motion.div>
     );
 };
 
-/* ── Section ─────────────────────────────────────────────── */
-const Projects = () => (
-    <section id="projects" className="py-16 relative overflow-hidden">
-        {/* Big ghost text decoration */}
-        <div className="absolute -top-6 left-0 right-0 text-center text-[20vw] font-black opacity-[0.02] select-none pointer-events-none uppercase leading-none tracking-tighter">
-            WORKS
-        </div>
+const Projects = () => {
+    return (
+        <section id="projects" className="py-24 relative overflow-hidden bg-[#020202]">
+            {/* Background Watermark */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[30vw] font-black text-white/[0.01] uppercase select-none pointer-events-none tracking-tighter leading-none whitespace-nowrap">
+                PORTFOLIO
+            </div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-20">
-                <div>
-                    <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                {/* Header */}
+                <div className="mb-24">
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="text-xs font-bold uppercase tracking-[0.4em] text-accent-purple mb-3"
+                        className="flex items-center gap-6 mb-6"
                     >
-                        Selected Works
-                    </motion.p>
-                    <motion.h2
-                        initial={{ opacity: 0, y: 30 }}
+                        <span className="w-12 h-px bg-accent-blue/50"></span>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-accent-blue">
+                            Selected Works
+                        </p>
+                    </motion.div>
+                    
+                    <motion.h2 
+                        initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none"
+                        className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none"
                     >
-                        Featured<br />
-                        <span className="accent-gradient">Projects</span>
+                        Featured <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/20">Creations</span>
                     </motion.h2>
                 </div>
 
-                <motion.a
-                    href="https://github.com/Ankitmina25"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                {/* horizontal cards list */}
+                <div className="flex flex-col gap-8">
+                    {projects.map((p, i) => (
+                        <ProjectCard key={p.id} project={p} index={i} />
+                    ))}
+                </div>
+
+                {/* Navigation CTA */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    whileHover={{ x: 6 }}
-                    className="flex items-center gap-3 text-sm font-black uppercase tracking-[0.25em] text-white/50 hover:text-white transition-colors mb-2"
+                    className="mt-20 flex flex-col items-center gap-8"
                 >
-                    View All on GitHub <ArrowRight size={16} />
-                </motion.a>
+                    <div className="h-px w-24 bg-white/10" />
+                    <a 
+                        href="https://github.com/Ankitmina25"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-4 text-sm font-black uppercase tracking-[0.3em] text-white/30 hover:text-white transition-all"
+                    >
+                        Explore More Repositories
+                        <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                    </a>
+                </motion.div>
             </div>
-
-            {/* Cards grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {projects.map((p, i) => (
-                    <ProjectCard key={p.id} project={p} index={i} />
-                ))}
-            </div>
-
-            {/* Bottom CTA */}
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                className="text-center mt-16"
-            >
-                <a
-                    href="https://github.com/Ankitmina25"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-3 px-8 py-4 glass-morphism rounded-full font-bold text-sm uppercase tracking-widest hover:bg-white/10 hover:scale-105 transition-all"
-                >
-                    <Github size={18} />
-                    More on GitHub
-                    <ArrowUpRight size={16} />
-                </a>
-            </motion.div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
 export default Projects;

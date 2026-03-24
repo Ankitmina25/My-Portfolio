@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import Intro from './components/layout/Intro';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Education from './components/sections/Education';
@@ -9,26 +9,31 @@ import Projects from './components/sections/Projects';
 import Certificates from './components/sections/Certificates';
 import Contact from './components/sections/Contact';
 import Footer from './components/layout/Footer';
+import CertificatesPage from './components/pages/CertificatesPage';
+
+function PortfolioHome() {
+  return (
+    <Layout>
+      <Hero />
+      <About />
+      <Education />
+      <TechStack />
+      <Projects />
+      <Certificates />
+      <Contact />
+      <Footer />
+    </Layout>
+  );
+}
 
 function App() {
-  const [introComplete, setIntroComplete] = useState(false);
-
   return (
-    <>
-      <Intro onComplete={() => setIntroComplete(true)} />
-      {introComplete && (
-        <Layout>
-          <Hero />
-          <About />
-          <Education />
-          <TechStack />
-          <Projects />
-          <Certificates />
-          <Contact />
-          <Footer />
-        </Layout>
-      )}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<PortfolioHome />} />
+        <Route path="/certificates" element={<CertificatesPage />} />
+      </Routes>
+    </Router>
   );
 }
 
