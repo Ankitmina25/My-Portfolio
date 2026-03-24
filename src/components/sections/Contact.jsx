@@ -49,8 +49,6 @@ const checkRateLimit = () => {
 };
 
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 const inputClass =
     'w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white outline-none ' +
     'focus:border-accent-purple/60 focus:bg-white/[0.08] focus:shadow-[0_0_0_3px_rgba(168,85,247,0.15)] ' +

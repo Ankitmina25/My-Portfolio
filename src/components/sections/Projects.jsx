@@ -26,7 +26,7 @@ const projects = [
         features: ['User Profiling', 'Direct Messaging', 'Interactive Board'],
         tech: ['Express', 'React', 'Node.js', 'Tailwind'],
         github: 'https://github.com/CodeWithRDX/MentorConnect.git',
-        live: '#',
+        live: 'https://mentor-connect-puce.vercel.app',
         image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2071',
         accent: '#06B6D4',
         accentB: '#A855F7',

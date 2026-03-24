@@ -206,7 +206,7 @@ const Hero = () => {
                             {/* Image Container */}
                             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-white/10 glass-morphism shadow-2xl">
                                 <img 
-                                    src="/profile.png" // Place your image as profile.png in the public folder
+                                    src="/profile.jpg" // Place your image as profile.jpg in the public folder
                                     alt="Ankit Meena" 
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                                     onError={(e) => {
@@ -345,7 +345,7 @@ const Hero = () => {
                                 General CV
                             </a>
                             <a 
-                                href="/specialized-cv.pdf" 
+                                href="https://drive.google.com/file/d/1rDeFaYH6e3hRou3pHAGNylz84dndhVQO/view?usp=sharing" 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="px-6 py-3 glass-morphism rounded-full text-sm font-semibold hover:bg-white/10 hover:scale-105 transition-all flex items-center gap-2 border border-white/5"
